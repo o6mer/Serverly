@@ -1,5 +1,8 @@
 import express from "express";
 import dotenv from "dotenv";
+import client from "./models/dbModel";
+
+client;
 
 dotenv.config();
 
