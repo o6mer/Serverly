@@ -45,7 +45,7 @@ export const deleteServer = async (req: Request, res: Response) => {
     const { serverId } = req.params;
 
     const { rows: servers } = await client.query(
-      "DELETE FROM server WHERE id = $1  RETURNING *",
+      "DELETE FROM server WHERE id = $1 RETURNING *",
       [serverId]
     );
     res.status(200).json({ servers });
@@ -84,9 +84,7 @@ export const refreshPrices = async (req: Request, res: Response) => {
 
     const pricedServers = servers.map((server) => refreshServerPrice(server));
 
-    res.json({ servers: pricedServers });
-
-    // res.status(200).json({ server });
+    res.status(200).json({ servers: pricedServers });
   } catch (err: any) {
     console.log(err);
     res.status(400).json({ message: err.message });

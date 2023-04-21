@@ -85,7 +85,7 @@ const ServersTable = ({ servers, setServers, currencies }: Props) => {
             {servers.map((server, i) => (
               <div
                 className={`grid grid-cols-7 gap-2 w-full ${
-                  i % 2 === 0 && "bg-slate-200"
+                  i % 2 !== 0 && "bg-slate-200"
                 }`}
                 key={server.name}
               >
