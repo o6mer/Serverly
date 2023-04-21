@@ -1,17 +1,17 @@
 import express from "express";
 import dotenv from "dotenv";
-import client from "./models/dbModel";
-
-client;
+import serverRouter from "./routes/serverRouter";
+import cors from "cors";
 
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT;
 
-app.get("/", (req, res) => {
-  res.send("Express + TypeScript Server");
-});
+app.use(express.json());
+app.use(cors());
+
+app.use("/api/server", serverRouter);
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
