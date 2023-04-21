@@ -72,7 +72,7 @@ const ServersTable = ({ servers, setServers, currencies }: Props) => {
     <section className="flex flex-col">
       <div className="flex">
         <div className="flex flex-col">
-          <div className="grid grid-cols-7 gap-2 w-full ">
+          <div className="grid grid-cols-7 gap-2 w-full bg-slate-300 font-bold">
             <p>ip</p>
             <p>name</p>
             <p>time running</p>
@@ -81,33 +81,44 @@ const ServersTable = ({ servers, setServers, currencies }: Props) => {
             <p>price</p>
             <p>delete</p>
           </div>
-          {servers.map((server: Server) => (
-            <div className="grid grid-cols-7 gap-2 w-full" key={server.name}>
-              <p>{server.ip}</p>
-              <p>{server.name}</p>
-              <p>
-                {server.total_running_time &&
-                  msToHMS(server.total_running_time)}
-              </p>
-              <button
-                className="border w-fit"
-                onClick={() => handleToggle(server.id)}
+          <div>
+            {servers.map((server, i) => (
+              <div
+                className={`grid grid-cols-7 gap-2 w-full ${
+                  i % 2 === 0 && "bg-slate-200"
+                }`}
+                key={server.name}
               >
-                {server.is_running ? "Turn Off" : "Turn On"}
-              </button>
-              <p>{server.type_name}</p>
-              <p>
-                {(
-                  (server.total_running_time / 60000) *
-                  server.price_per_minute *
-                  changeRate
-                ).toFixed(2) + ` ${currency}`}
-              </p>
-              <button className="w-fit" onClick={() => handleDelete(server.id)}>
-                X
-              </button>
-            </div>
-          ))}
+                <p>{server.ip}</p>
+                <p>{server.name}</p>
+                <p>
+                  {server.total_running_time &&
+                    msToHMS(server.total_running_time)}
+                </p>
+                <button
+                  className="border w-fit"
+                  onClick={() => handleToggle(server.id)}
+                >
+                  {server.is_running ? "Turn Off" : "Turn On"}
+                </button>
+                <p>{server.type_name}</p>
+                <p>
+                  {(
+                    (server.total_running_time / 60000) *
+                    server.price_per_minute *
+                    changeRate
+                  ).toFixed(2) + ` ${currency}`}
+                </p>
+                <button
+                  className="w-fit"
+                  onClick={() => handleDelete(server.id)}
+                >
+                  X
+                </button>
+              </div>
+            ))}
+          </div>
+
           <div className="self-end">
             <select
               value={currency}
