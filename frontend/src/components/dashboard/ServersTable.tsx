@@ -1,15 +1,25 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Server } from "../../types";
 import axios from "axios";
-import date from "date-and-time";
 import { msToHMS } from "../../utils/timeFormats";
 
 interface Props {
   servers: Server[];
   setServers: React.Dispatch<React.SetStateAction<Server[]>>;
+  currencies: {
+    [key: string]: number;
+  };
 }
 
-const ServersTable = ({ servers, setServers }: Props) => {
+const ServersTable = ({ servers, setServers, currencies }: Props) => {
+  const [currency, setCurrency] = useState("USD");
+  const [changeRate, setChangeRate] = useState(1);
+
+  useEffect(() => {
+    if (!currencies[currency]) return;
+    setChangeRate(currencies[currency]);
+  }, [currency]);
+
   const handleDelete = async (serverId: number) => {
     try {
       const { data } = await axios.delete(
@@ -64,7 +74,7 @@ const ServersTable = ({ servers, setServers }: Props) => {
   return (
     <section className="flex flex-col">
       <div className="flex">
-        <div>
+        <div className="flex flex-col">
           <div className="grid grid-cols-7 gap-2 w-full ">
             <p>ip</p>
             <p>name</p>
@@ -92,19 +102,30 @@ const ServersTable = ({ servers, setServers }: Props) => {
               <p>
                 {(
                   (server.total_running_time / 60000) *
-                  server.price_per_minute
-                ).toFixed(2)}
-                $
+                  server.price_per_minute *
+                  changeRate
+                ).toFixed(2) + ` ${currency}`}
               </p>
               <button className="w-fit" onClick={() => handleDelete(server.id)}>
                 X
               </button>
             </div>
           ))}
+          <div className="self-end">
+            <select
+              value={currency}
+              onChange={(e) => setCurrency(e.currentTarget.value)}
+              className="w-min "
+            >
+              <option value="USD">USD</option>
+              <option value="ILS">ILS</option>
+              <option value="EUR">EUR</option>
+            </select>
+            <button className="border" onClick={handleRefresh}>
+              refresh
+            </button>
+          </div>
         </div>
-        <button className="border" onClick={handleRefresh}>
-          refresh
-        </button>
       </div>
     </section>
   );
