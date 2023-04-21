@@ -33,8 +33,6 @@ const NewServerForm = ({ serverTypes, setServers }: Props) => {
         }
       );
 
-      console.log(data.server);
-
       setServers((prev) => [...prev, data.server]);
       clearForm();
     } catch (err) {

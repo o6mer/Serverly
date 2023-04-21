@@ -22,7 +22,7 @@ const ServersTable = ({ servers, setServers, currencies }: Props) => {
 
   const handleDelete = async (serverId: number) => {
     try {
-      const { data } = await axios.delete(
+      await axios.delete(
         `${import.meta.env.VITE_API_URL}/server/delete/${serverId}`
       );
 
@@ -30,7 +30,6 @@ const ServersTable = ({ servers, setServers, currencies }: Props) => {
         prev = prev.filter((server) => server.id !== serverId);
         return [...prev];
       });
-      console.log(data);
     } catch (err) {
       console.log(err);
     }
@@ -62,8 +61,6 @@ const ServersTable = ({ servers, setServers, currencies }: Props) => {
       const { data } = await axios.get(
         `${import.meta.env.VITE_API_URL}/server/refresh`
       );
-
-      console.log(data);
 
       setServers([...data.servers]);
     } catch (err) {
@@ -115,7 +112,7 @@ const ServersTable = ({ servers, setServers, currencies }: Props) => {
             <select
               value={currency}
               onChange={(e) => setCurrency(e.currentTarget.value)}
-              className="w-min "
+              className="w-min border"
             >
               <option value="USD">USD</option>
               <option value="ILS">ILS</option>
