@@ -31,8 +31,8 @@ const DashboardPage = () => {
   }, []);
 
   return (
-    <main className="h-full flex items-center justify-center">
-      <div className="w-fit flex flex-col gap-4">
+    <main className="h-full flex items-center justify-center ">
+      <div className="w-fit flex flex-col gap-4 border p-8">
         <ServersTable
           servers={servers}
           setServers={setServers}

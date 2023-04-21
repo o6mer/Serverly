@@ -119,7 +119,7 @@ const ServersTable = ({ servers, setServers, currencies }: Props) => {
             ))}
           </div>
 
-          <div className="self-end">
+          <div className="self-end mt-4">
             <select
               value={currency}
               onChange={(e) => setCurrency(e.currentTarget.value)}
