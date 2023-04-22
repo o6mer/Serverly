@@ -1,8 +1,9 @@
 import { FormEvent, useState, useContext } from "react";
 import axios from "axios";
 import Loader from "../general/Loader";
-import InputMask from "react-input-mask";
+// import InputMask from "react-input-mask";
 import { IServerContext, ServerContext } from "../../contexts/ServerContext";
+import MaskedInput from "react-text-mask";
 
 const NewServerForm = () => {
   const [serverName, setServerName] = useState("");
@@ -49,7 +50,7 @@ const NewServerForm = () => {
     <section className="self-start ">
       <form
         action=""
-        className="grid grid-cols-2 gap-4"
+        className="grid grid-cols-2 gap-4 content-stretch"
         onSubmit={handleSubmit}
       >
         <label htmlFor="server-name" className="flex flex-col">
@@ -66,18 +67,39 @@ const NewServerForm = () => {
         </label>
 
         <label htmlFor="server-ip" className="flex flex-col">
-          Server IP{" "}
-          <InputMask
-            placeholder="000.000.000.000"
-            maskChar=""
-            required
-            mask="999.999.999.999"
-            value={serverIp}
-            onChange={(e) => setServerIp(e.currentTarget.value)}
-            type="text"
-            id="server-ip"
+          Server IP
+          <MaskedInput
+            mask={(value) => Array(value.length).fill(/[\d.]/)}
+            pipe={(value) => {
+              if (value === "." || value.endsWith("..")) return false;
+
+              const parts = value.split(".");
+
+              if (
+                parts.length > 4 ||
+                parts.some(
+                  (part) =>
+                    part === "00" || Number(part) < 0 || Number(part) > 255
+                )
+              ) {
+                return false;
+              }
+
+              return value;
+            }}
+            placeholderChar={"\u2000"}
+            keepCharPositions={true}
+            showMask
             className="border"
+            placeholder="0.0.0.0"
+            guide={false}
+            id="server-ip"
+            type="text"
+            onChange={(e) => setServerIp(e.currentTarget.value)}
+            value={serverIp}
+            required
           />
+          {/* <ReactInputMask placeholder="000.000.000.000" maskChar="" mask="ip" /> */}
         </label>
 
         <select
