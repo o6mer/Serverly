@@ -1,21 +1,16 @@
-import React, { useEffect, useState, useMemo } from "react";
-import { Server } from "../../types";
+import { useEffect, useState, useMemo, useContext } from "react";
 import axios from "axios";
 import { msToHMS } from "../../utils/timeFormats";
 import Loader from "../general/Loader";
+import { IServerContext, ServerContext } from "../../contexts/ServerContext";
 
-interface Props {
-  servers: Server[];
-  setServers: React.Dispatch<React.SetStateAction<Server[]>>;
-  currencies: {
-    [key: string]: number;
-  };
-}
-
-const ServersTable = ({ servers, setServers, currencies }: Props) => {
+const ServersTable = () => {
   const [currency, setCurrency] = useState("USD");
-  // const [changeRate, setChangeRate] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+
+  const { currencies, servers, setServers } = useContext(
+    ServerContext
+  ) as IServerContext;
 
   const changeRate = useMemo(
     () => currencies[currency],
@@ -60,7 +55,7 @@ const ServersTable = ({ servers, setServers, currencies }: Props) => {
 
   const handleToggle = async (serverId: number) => {
     try {
-      const { data } = await axios.post(
+      await axios.post(
         `${import.meta.env.VITE_API_URL}/server/toggle/${serverId}`
       );
 

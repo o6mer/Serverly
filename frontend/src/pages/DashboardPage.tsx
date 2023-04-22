@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import ServersTable from "../components/dashboard/ServersTable";
 import NewServerForm from "../components/dashboard/NewServerForm";
 import axios from "axios";
-import { Server, ServerType } from "../types";
 import Loader from "../components/general/Loader";
+import { IServerContext, ServerContext } from "../contexts/ServerContext";
 
 const DashboardPage = () => {
-  const [servers, setServers] = useState<Server[]>([]);
-  const [serverTypes, setServerTypes] = useState<ServerType[]>([]);
-  const [currencies, setCurrencies] = useState({});
   const [isLoadig, setIsLoading] = useState(false);
+
+  const { setServers, setCurrencies, setServerTypes } = useContext(
+    ServerContext
+  ) as IServerContext;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,7 +39,7 @@ const DashboardPage = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [setCurrencies, setServers, setServerTypes]);
 
   return (
     <main className="h-full flex items-center justify-center ">
@@ -47,12 +48,8 @@ const DashboardPage = () => {
           <Loader />
         ) : (
           <>
-            <ServersTable
-              servers={servers}
-              setServers={setServers}
-              currencies={currencies}
-            />
-            <NewServerForm serverTypes={serverTypes} setServers={setServers} />
+            <ServersTable />
+            <NewServerForm />
           </>
         )}
       </div>

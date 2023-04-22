@@ -5,6 +5,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 import ErrorPage from "./pages/ErrorPage.tsx";
 import DashboardPage from "./pages/DashboardPage.tsx";
+import ServerContextProvider from "./contexts/ServerContext.tsx";
 
 const router = createBrowserRouter([
   {
@@ -16,6 +17,8 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <ServerContextProvider>
+      <RouterProvider router={router} />
+    </ServerContextProvider>
   </React.StrictMode>
 );

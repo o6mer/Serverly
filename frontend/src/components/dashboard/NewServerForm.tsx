@@ -1,19 +1,18 @@
-import React, { FormEvent, useState } from "react";
-import { Server, ServerType } from "../../types";
+import { FormEvent, useState, useContext } from "react";
 import axios from "axios";
 import Loader from "../general/Loader";
 import InputMask from "react-input-mask";
+import { IServerContext, ServerContext } from "../../contexts/ServerContext";
 
-interface Props {
-  serverTypes: ServerType[];
-  setServers: React.Dispatch<React.SetStateAction<Server[]>>;
-}
-
-const NewServerForm = ({ serverTypes, setServers }: Props) => {
+const NewServerForm = () => {
   const [serverName, setServerName] = useState("");
   const [serverIp, setServerIp] = useState("");
   const [serverTypeId, setServerTypeId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const { setServers, serverTypes } = useContext(
+    ServerContext
+  ) as IServerContext;
 
   const clearForm = () => {
     setServerName("");
@@ -56,6 +55,8 @@ const NewServerForm = ({ serverTypes, setServers }: Props) => {
         <label htmlFor="server-name" className="flex flex-col">
           Server Name{" "}
           <input
+            placeholder="My Server..."
+            required
             type="text"
             id="server-name"
             className="border"
@@ -67,6 +68,9 @@ const NewServerForm = ({ serverTypes, setServers }: Props) => {
         <label htmlFor="server-ip" className="flex flex-col">
           Server IP{" "}
           <InputMask
+            placeholder="000.000.000.000"
+            maskChar=""
+            required
             mask="999.999.999.999"
             value={serverIp}
             onChange={(e) => setServerIp(e.currentTarget.value)}
@@ -77,6 +81,7 @@ const NewServerForm = ({ serverTypes, setServers }: Props) => {
         </label>
 
         <select
+          required
           name=""
           id=""
           value={serverTypeId}
