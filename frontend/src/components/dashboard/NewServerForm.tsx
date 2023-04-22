@@ -99,7 +99,6 @@ const NewServerForm = () => {
             value={serverIp}
             required
           />
-          {/* <ReactInputMask placeholder="000.000.000.000" maskChar="" mask="ip" /> */}
         </label>
 
         <select
