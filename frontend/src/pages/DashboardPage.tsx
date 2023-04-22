@@ -16,18 +16,15 @@ const DashboardPage = () => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const { data: fetchedServers } = await axios.get(
-          `${import.meta.env.VITE_API_URL}/server/servers`
-        );
-        const { data: fetchedServerTypes } = await axios.get(
-          `${import.meta.env.VITE_API_URL}/server/server-types`
-        );
-
-        const { data: currencies } = await axios.get(
-          `https://api.freecurrencyapi.com/v1/latest?apikey=${
-            import.meta.env.VITE_CURRENCY_API_KEY
-          }&currencies=EUR%2CUSD%2CILS`
-        );
+        const [
+          { data: fetchedServers },
+          { data: fetchedServerTypes },
+          { data: currencies },
+        ] = await Promise.all([
+          axios.get(`${import.meta.env.VITE_API_URL}/server/servers`),
+          axios.get(`${import.meta.env.VITE_API_URL}/server/server-types`),
+          axios.get(`${import.meta.env.VITE_API_URL}/util/currencies`),
+        ]);
 
         setCurrencies({ ...currencies.data });
         setServers([...fetchedServers.servers]);
