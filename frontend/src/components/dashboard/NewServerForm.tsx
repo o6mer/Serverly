@@ -2,6 +2,7 @@ import React, { FormEvent, useState } from "react";
 import { Server, ServerType } from "../../types";
 import axios from "axios";
 import Loader from "../general/Loader";
+import InputMask from "react-input-mask";
 
 interface Props {
   serverTypes: ServerType[];
@@ -11,19 +12,19 @@ interface Props {
 const NewServerForm = ({ serverTypes, setServers }: Props) => {
   const [serverName, setServerName] = useState("");
   const [serverIp, setServerIp] = useState("");
-  const [serverType, setServerType] = useState("");
+  const [serverTypeId, setServerTypeId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const clearForm = () => {
     setServerName("");
     setServerIp("");
-    setServerType("");
+    setServerTypeId("");
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    if (!serverName || !serverType || !serverIp) return;
+    if (!serverName || !serverTypeId || !serverIp) return;
 
     try {
       setIsLoading(true);
@@ -32,7 +33,7 @@ const NewServerForm = ({ serverTypes, setServers }: Props) => {
         {
           serverName,
           serverIp,
-          serverType,
+          serverTypeId,
         }
       );
 
@@ -65,20 +66,21 @@ const NewServerForm = ({ serverTypes, setServers }: Props) => {
 
         <label htmlFor="server-ip" className="flex flex-col">
           Server IP{" "}
-          <input
+          <InputMask
+            mask="999.999.999.999"
+            value={serverIp}
+            onChange={(e) => setServerIp(e.currentTarget.value)}
             type="text"
             id="server-ip"
             className="border"
-            value={serverIp}
-            onChange={(e) => setServerIp(e.currentTarget.value)}
           />
         </label>
 
         <select
           name=""
           id=""
-          value={serverType}
-          onChange={(e) => setServerType(e.currentTarget.value)}
+          value={serverTypeId}
+          onChange={(e) => setServerTypeId(e.currentTarget.value)}
         >
           <option value="" disabled>
             Server Type

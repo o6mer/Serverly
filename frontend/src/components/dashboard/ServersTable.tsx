@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Server } from "../../types";
 import axios from "axios";
 import { msToHMS } from "../../utils/timeFormats";
@@ -14,8 +14,13 @@ interface Props {
 
 const ServersTable = ({ servers, setServers, currencies }: Props) => {
   const [currency, setCurrency] = useState("USD");
-  const [changeRate, setChangeRate] = useState(1);
+  // const [changeRate, setChangeRate] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+
+  const changeRate = useMemo(
+    () => currencies[currency],
+    [currencies, currency]
+  );
 
   useEffect(() => {
     const updateRunningTime = setInterval(() => {
@@ -33,12 +38,7 @@ const ServersTable = ({ servers, setServers, currencies }: Props) => {
     }, 1000);
 
     return () => clearInterval(updateRunningTime);
-  }, []);
-
-  useEffect(() => {
-    if (!currencies[currency]) return;
-    setChangeRate(currencies[currency]);
-  }, [currency]);
+  }, [setServers]);
 
   const handleDelete = async (serverId: number) => {
     try {
@@ -157,6 +157,7 @@ const ServersTable = ({ servers, setServers, currencies }: Props) => {
               onChange={(e) => setCurrency(e.currentTarget.value)}
               className="w-min border"
             >
+              {}
               <option value="USD">USD</option>
               <option value="ILS">ILS</option>
               <option value="EUR">EUR</option>

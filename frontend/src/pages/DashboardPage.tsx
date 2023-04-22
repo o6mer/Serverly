@@ -15,8 +15,11 @@ const DashboardPage = () => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const { data } = await axios.get(
-          `${import.meta.env.VITE_API_URL}/server`
+        const { data: fetchedServers } = await axios.get(
+          `${import.meta.env.VITE_API_URL}/server/servers`
+        );
+        const { data: fetchedServerTypes } = await axios.get(
+          `${import.meta.env.VITE_API_URL}/server/server-types`
         );
 
         const { data: currencies } = await axios.get(
@@ -25,11 +28,9 @@ const DashboardPage = () => {
           }&currencies=EUR%2CUSD%2CILS`
         );
 
-        console.log(currencies);
-
         setCurrencies({ ...currencies.data });
-        setServers([...data.servers]);
-        setServerTypes([...data.serverTypes]);
+        setServers([...fetchedServers.servers]);
+        setServerTypes([...fetchedServerTypes.serverTypes]);
         setIsLoading(false);
       } catch (err) {
         console.log(err);

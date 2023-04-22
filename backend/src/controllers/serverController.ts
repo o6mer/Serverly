@@ -7,10 +7,22 @@ export const getServers = async (req: Request, res: Response) => {
     const { rows: servers } = await client.query(
       "SELECT * FROM server JOIN server_type ON server.type_id = server_type.type_id"
     );
+
+    const pricedServers = servers.map((server) => refreshServerPrice(server));
+
+    res.status(200).json({ servers: pricedServers });
+  } catch (err: any) {
+    console.log(err);
+    res.status(400).json({ message: err.message });
+  }
+};
+
+export const getServerTypes = async (req: Request, res: Response) => {
+  try {
     const { rows: serverTypes } = await client.query(
       "SELECT * FROM server_type"
     );
-    res.status(200).json({ servers, serverTypes });
+    res.status(200).json({ serverTypes });
   } catch (err: any) {
     console.log(err);
     res.status(400).json({ message: err.message });
@@ -19,13 +31,13 @@ export const getServers = async (req: Request, res: Response) => {
 
 export const addServer = async (req: Request, res: Response) => {
   try {
-    const { serverName, serverIp, serverType } = req.body;
+    const { serverName, serverIp, serverTypeId } = req.body;
 
-    console.log(serverName, serverIp, serverType);
+    console.log(serverName, serverIp, serverTypeId);
 
     const { rows: newServer } = await client.query(
       `INSERT INTO server (name, ip, type_id, is_running ) values ($1, $2, $3, FALSE) RETURNING *`,
-      [serverName, serverIp, serverType]
+      [serverName, serverIp, serverTypeId]
     );
 
     const { rows: formatedServer } = await client.query(
@@ -76,7 +88,7 @@ export const toggleServer = async (req: Request, res: Response) => {
   }
 };
 
-export const refreshPrices = async (req: Request, res: Response) => {
+export const getPrices = async (req: Request, res: Response) => {
   try {
     const { rows: servers } = await client.query(
       "SELECT * FROM server JOIN server_type ON server.type_id = server_type.type_id"
