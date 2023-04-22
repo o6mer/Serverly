@@ -119,8 +119,8 @@ const ServersTable = () => {
                     <p>{server.name}</p>
                     <p>
                       {server.total_running_time
-                        ? "00:00:00"
-                        : msToHMS(server.total_running_time)}
+                        ? msToHMS(server.total_running_time)
+                        : "00:00:00"}
                     </p>
                     <button
                       className="border w-fit"
