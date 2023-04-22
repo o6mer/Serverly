@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Server } from "../../types";
 import axios from "axios";
 import { msToHMS } from "../../utils/timeFormats";
+import Loader from "../general/Loader";
 
 interface Props {
   servers: Server[];
@@ -14,6 +15,7 @@ interface Props {
 const ServersTable = ({ servers, setServers, currencies }: Props) => {
   const [currency, setCurrency] = useState("USD");
   const [changeRate, setChangeRate] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (!currencies[currency]) return;
@@ -22,6 +24,7 @@ const ServersTable = ({ servers, setServers, currencies }: Props) => {
 
   const handleDelete = async (serverId: number) => {
     try {
+      setIsLoading(true);
       await axios.delete(
         `${import.meta.env.VITE_API_URL}/server/delete/${serverId}`
       );
@@ -30,13 +33,16 @@ const ServersTable = ({ servers, setServers, currencies }: Props) => {
         prev = prev.filter((server) => server.id !== serverId);
         return [...prev];
       });
+      setIsLoading(false);
     } catch (err) {
       console.log(err);
+      setIsLoading(false);
     }
   };
 
   const handleToggle = async (serverId: number) => {
     try {
+      setIsLoading(true);
       const { data } = await axios.post(
         `${import.meta.env.VITE_API_URL}/server/toggle/${serverId}`
       );
@@ -51,26 +57,31 @@ const ServersTable = ({ servers, setServers, currencies }: Props) => {
         updatedServers[index] = updatedServer;
         return updatedServers;
       });
+      setIsLoading(false);
     } catch (err) {
       console.log(err);
+      setIsLoading(false);
     }
   };
 
   const handleRefresh = async () => {
     try {
+      setIsLoading(true);
       const { data } = await axios.get(
         `${import.meta.env.VITE_API_URL}/server/refresh`
       );
 
       setServers([...data.servers]);
+      setIsLoading(false);
     } catch (err) {
       console.log(err);
+      setIsLoading(false);
     }
   };
 
   return (
-    <section className="flex flex-col">
-      <div className="flex">
+    <>
+      <section className="flex ">
         <div className="flex flex-col">
           <div className="grid grid-cols-7 gap-2 w-full bg-slate-300 font-bold">
             <p>ip</p>
@@ -81,43 +92,47 @@ const ServersTable = ({ servers, setServers, currencies }: Props) => {
             <p>price</p>
             <p>delete</p>
           </div>
-          <div>
-            {servers.map((server, i) => (
-              <div
-                className={`grid grid-cols-7 gap-2 w-full ${
-                  i % 2 !== 0 && "bg-slate-200"
-                }`}
-                key={server.name}
-              >
-                <p>{server.ip}</p>
-                <p>{server.name}</p>
-                <p>
-                  {server.total_running_time &&
-                    msToHMS(server.total_running_time)}
-                </p>
-                <button
-                  className="border w-fit"
-                  onClick={() => handleToggle(server.id)}
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <div>
+              {servers.map((server, i) => (
+                <div
+                  className={`grid grid-cols-7 gap-2 w-full ${
+                    i % 2 !== 0 && "bg-slate-200"
+                  }`}
+                  key={server.name}
                 >
-                  {server.is_running ? "Turn Off" : "Turn On"}
-                </button>
-                <p>{server.type_name}</p>
-                <p>
-                  {(
-                    (server.total_running_time / 60000) *
-                    server.price_per_minute *
-                    changeRate
-                  ).toFixed(2) + ` ${currency}`}
-                </p>
-                <button
-                  className="w-fit"
-                  onClick={() => handleDelete(server.id)}
-                >
-                  X
-                </button>
-              </div>
-            ))}
-          </div>
+                  <p>{server.ip}</p>
+                  <p>{server.name}</p>
+                  <p>
+                    {server.total_running_time &&
+                      msToHMS(server.total_running_time)}
+                  </p>
+                  <button
+                    className="border w-fit"
+                    onClick={() => handleToggle(server.id)}
+                  >
+                    {server.is_running ? "Turn Off" : "Turn On"}
+                  </button>
+                  <p>{server.type_name}</p>
+                  <p>
+                    {(
+                      (server.total_running_time / 60000) *
+                      server.price_per_minute *
+                      changeRate
+                    ).toFixed(2) + ` ${currency}`}
+                  </p>
+                  <button
+                    className="w-fit"
+                    onClick={() => handleDelete(server.id)}
+                  >
+                    X
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
 
           <div className="self-end mt-4">
             <select
@@ -134,8 +149,8 @@ const ServersTable = ({ servers, setServers, currencies }: Props) => {
             </button>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 };
 
