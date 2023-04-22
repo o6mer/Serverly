@@ -18,6 +18,24 @@ const ServersTable = ({ servers, setServers, currencies }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    const updateRunningTime = setInterval(() => {
+      setServers((prev) => {
+        const updatedServers = prev.map((server) => {
+          if (server.is_running)
+            return {
+              ...server,
+              total_running_time: server.total_running_time + 1000,
+            };
+          return server;
+        });
+        return [...updatedServers];
+      });
+    }, 1000);
+
+    return () => clearInterval(updateRunningTime);
+  }, []);
+
+  useEffect(() => {
     if (!currencies[currency]) return;
     setChangeRate(currencies[currency]);
   }, [currency]);
@@ -42,7 +60,6 @@ const ServersTable = ({ servers, setServers, currencies }: Props) => {
 
   const handleToggle = async (serverId: number) => {
     try {
-      setIsLoading(true);
       const { data } = await axios.post(
         `${import.meta.env.VITE_API_URL}/server/toggle/${serverId}`
       );
@@ -57,10 +74,8 @@ const ServersTable = ({ servers, setServers, currencies }: Props) => {
         updatedServers[index] = updatedServer;
         return updatedServers;
       });
-      setIsLoading(false);
     } catch (err) {
       console.log(err);
-      setIsLoading(false);
     }
   };
 
@@ -96,41 +111,43 @@ const ServersTable = ({ servers, setServers, currencies }: Props) => {
             <Loader />
           ) : (
             <div>
-              {servers.map((server, i) => (
-                <div
-                  className={`grid grid-cols-7 gap-2 w-full ${
-                    i % 2 !== 0 && "bg-slate-200"
-                  }`}
-                  key={server.name}
-                >
-                  <p>{server.ip}</p>
-                  <p>{server.name}</p>
-                  <p>
-                    {server.total_running_time &&
-                      msToHMS(server.total_running_time)}
-                  </p>
-                  <button
-                    className="border w-fit"
-                    onClick={() => handleToggle(server.id)}
+              {servers
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .map((server, i) => (
+                  <div
+                    className={`grid grid-cols-7 gap-2 w-full ${
+                      i % 2 !== 0 && "bg-slate-200"
+                    }`}
+                    key={server.name}
                   >
-                    {server.is_running ? "Turn Off" : "Turn On"}
-                  </button>
-                  <p>{server.type_name}</p>
-                  <p>
-                    {(
-                      (server.total_running_time / 60000) *
-                      server.price_per_minute *
-                      changeRate
-                    ).toFixed(2) + ` ${currency}`}
-                  </p>
-                  <button
-                    className="w-fit"
-                    onClick={() => handleDelete(server.id)}
-                  >
-                    X
-                  </button>
-                </div>
-              ))}
+                    <p>{server.ip}</p>
+                    <p>{server.name}</p>
+                    <p>
+                      {server.total_running_time &&
+                        msToHMS(server.total_running_time)}
+                    </p>
+                    <button
+                      className="border w-fit"
+                      onClick={() => handleToggle(server.id)}
+                    >
+                      {server.is_running ? "Turn Off" : "Turn On"}
+                    </button>
+                    <p>{server.type_name}</p>
+                    <p>
+                      {(
+                        (server.total_running_time / 60000) *
+                        server.price_per_minute *
+                        changeRate
+                      ).toFixed(2) + ` ${currency}`}
+                    </p>
+                    <button
+                      className="w-fit"
+                      onClick={() => handleDelete(server.id)}
+                    >
+                      X
+                    </button>
+                  </div>
+                ))}
             </div>
           )}
 
