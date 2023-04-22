@@ -1,6 +1,7 @@
 import React, { FormEvent, useState } from "react";
 import { Server, ServerType } from "../../types";
 import axios from "axios";
+import Loader from "../general/Loader";
 
 interface Props {
   serverTypes: ServerType[];
@@ -11,6 +12,7 @@ const NewServerForm = ({ serverTypes, setServers }: Props) => {
   const [serverName, setServerName] = useState("");
   const [serverIp, setServerIp] = useState("");
   const [serverType, setServerType] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const clearForm = () => {
     setServerName("");
@@ -24,6 +26,7 @@ const NewServerForm = ({ serverTypes, setServers }: Props) => {
     if (!serverName || !serverType || !serverIp) return;
 
     try {
+      setIsLoading(true);
       const { data } = await axios.post(
         `${import.meta.env.VITE_API_URL}/server/new`,
         {
@@ -35,8 +38,10 @@ const NewServerForm = ({ serverTypes, setServers }: Props) => {
 
       setServers((prev) => [...prev, data.server]);
       clearForm();
+      setIsLoading(false);
     } catch (err) {
       console.log(err);
+      setIsLoading(false);
     }
   };
 
@@ -84,10 +89,13 @@ const NewServerForm = ({ serverTypes, setServers }: Props) => {
             </option>
           ))}
         </select>
-
-        <button className="border" type="submit">
-          Add Server
-        </button>
+        {isLoading ? (
+          <Loader />
+        ) : (
+          <button className="border" type="submit">
+            Add Server
+          </button>
+        )}
       </form>
     </section>
   );
