@@ -6,7 +6,7 @@ import Loader from "../components/general/Loader";
 import { IServerContext, ServerContext } from "../contexts/ServerContext";
 
 const DashboardPage = () => {
-  const [isLoadig, setIsLoading] = useState(false);
+  const [isLoadig, setIsLoading] = useState(true);
 
   const { setServers, setCurrencies, setServerTypes } = useContext(
     ServerContext
@@ -39,8 +39,8 @@ const DashboardPage = () => {
   }, [setCurrencies, setServers, setServerTypes]);
 
   return (
-    <main className="h-full flex items-center justify-center ">
-      <div className="w-fit flex flex-col gap-4 border p-8">
+    <main className="h-full w-full max-w-screen flex items-center justify-center ">
+      <div className="md:w-fit w-full flex flex-col items-center gap-4 border p-8">
         {isLoadig ? (
           <Loader />
         ) : (

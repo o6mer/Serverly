@@ -90,81 +90,84 @@ const ServersTable = () => {
   };
 
   return (
-    <>
-      <section className="flex ">
-        <div className="flex flex-col">
-          <div className="grid grid-cols-7 gap-2 w-full bg-slate-300 font-bold">
-            <p>ip</p>
-            <p>name</p>
-            <p>time running</p>
-            <p>toggle</p>
-            <p>type</p>
-            <p>price</p>
-            <p>delete</p>
-          </div>
+    <section className="flex flex-col md:items-center w-full md:w-fit">
+      <div className="overflow-x-auto">
+        <table className="w-full ">
+          <thead>
+            <tr className=" text-left bg-gray-300 w-full">
+              <th>ip</th>
+              <th>name</th>
+              <th>time running</th>
+              <th>toggle</th>
+              <th>type</th>
+              <th>price</th>
+              <th>delete</th>
+            </tr>
+          </thead>
           {isLoading ? (
             <Loader />
           ) : (
-            <div>
+            <tbody>
               {servers
                 .sort((a, b) => a.name.localeCompare(b.name))
                 .map((server, i) => (
-                  <div
-                    className={`grid grid-cols-7 gap-2 w-full ${
-                      i % 2 !== 0 && "bg-slate-200"
-                    }`}
+                  <tr
+                    className={`w-max ${i % 2 !== 0 && "bg-slate-200"}`}
                     key={server.name}
                   >
-                    <p>{server.ip}</p>
-                    <p>{server.name}</p>
-                    <p>
+                    <td>{server.ip}</td>
+                    <td>{server.name}</td>
+                    <td>
                       {server.total_running_time
                         ? msToHMS(server.total_running_time)
                         : "00:00:00"}
-                    </p>
-                    <button
-                      className="border w-fit"
-                      onClick={() => handleToggle(server.id)}
-                    >
-                      {server.is_running ? "Turn Off" : "Turn On"}
-                    </button>
-                    <p>{server.type_name}</p>
-                    <p>
+                    </td>
+                    <td>
+                      <button
+                        className="border w-fit"
+                        onClick={() => handleToggle(server.id)}
+                      >
+                        {server.is_running ? "Turn Off" : "Turn On"}
+                      </button>
+                    </td>
+                    <td>{server.type_name}</td>
+                    <td>
                       {(
                         (server.total_running_time / 60000) *
                         server.price_per_minute *
                         changeRate
                       ).toFixed(2) + ` ${currency}`}
-                    </p>
-                    <button
-                      className="w-fit"
-                      onClick={() => handleDelete(server.id)}
-                    >
-                      X
-                    </button>
-                  </div>
+                    </td>
+                    <td>
+                      <button
+                        className="w-fit"
+                        onClick={() => handleDelete(server.id)}
+                      >
+                        X
+                      </button>
+                    </td>
+                  </tr>
                 ))}
-            </div>
+            </tbody>
           )}
+        </table>
+      </div>
 
-          <div className="self-end mt-4">
-            <select
-              value={currency}
-              onChange={(e) => setCurrency(e.currentTarget.value)}
-              className="w-min border"
-            >
-              {}
-              <option value="USD">USD</option>
-              <option value="ILS">ILS</option>
-              <option value="EUR">EUR</option>
-            </select>
-            <button className="border" onClick={handleRefresh}>
-              refresh
-            </button>
-          </div>
-        </div>
-      </section>
-    </>
+      <div className="self-end mt-4">
+        <select
+          value={currency}
+          onChange={(e) => setCurrency(e.currentTarget.value)}
+          className="w-min border"
+        >
+          <option value="USD">USD</option>
+          <option value="ILS">ILS</option>
+          <option value="EUR">EUR</option>
+        </select>
+        <button className="border" onClick={handleRefresh}>
+          refresh
+        </button>
+      </div>
+    </section>
   );
 };
 
