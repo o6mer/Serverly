@@ -95,13 +95,13 @@ const ServersTable = () => {
         <table className="w-full ">
           <thead>
             <tr className=" text-left bg-gray-300 w-full">
-              <th>ip</th>
-              <th>name</th>
-              <th>time running</th>
-              <th>toggle</th>
-              <th>type</th>
-              <th>price</th>
-              <th>delete</th>
+              <th>IP</th>
+              <th>Name</th>
+              <th>Time Running</th>
+              <th>Toggle</th>
+              <th>Type</th>
+              <th>Price</th>
+              <th>Delete</th>
             </tr>
           </thead>
           {isLoading ? (
