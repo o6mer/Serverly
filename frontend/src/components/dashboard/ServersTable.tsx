@@ -108,46 +108,50 @@ const ServersTable = () => {
             <Loader />
           ) : (
             <tbody>
-              {servers
-                .sort((a, b) => a.name.localeCompare(b.name))
-                .map((server, i) => (
-                  <tr
-                    className={`w-max ${i % 2 !== 0 && "bg-slate-200"}`}
-                    key={server.name}
-                  >
-                    <td>{server.ip}</td>
-                    <td>{server.name}</td>
-                    <td>
-                      {server.total_running_time
-                        ? msToHMS(server.total_running_time)
-                        : "00:00:00"}
-                    </td>
-                    <td>
-                      <button
-                        className="border w-fit"
-                        onClick={() => handleToggle(server.id)}
-                      >
-                        {server.is_running ? "Turn Off" : "Turn On"}
-                      </button>
-                    </td>
-                    <td>{server.type_name}</td>
-                    <td>
-                      {(
-                        (server.total_running_time / 60000) *
-                        server.price_per_minute *
-                        changeRate
-                      ).toFixed(2) + ` ${currency}`}
-                    </td>
-                    <td>
-                      <button
-                        className="w-fit"
-                        onClick={() => handleDelete(server.id)}
-                      >
-                        X
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+              {servers.length ? (
+                servers
+                  .sort((a, b) => a.name.localeCompare(b.name))
+                  .map((server, i) => (
+                    <tr
+                      className={`w-max ${i % 2 !== 0 && "bg-slate-200"}`}
+                      key={server.name}
+                    >
+                      <td>{server.ip}</td>
+                      <td>{server.name}</td>
+                      <td>
+                        {server.total_running_time
+                          ? msToHMS(server.total_running_time)
+                          : "00:00:00"}
+                      </td>
+                      <td>
+                        <button
+                          className="border w-fit"
+                          onClick={() => handleToggle(server.id)}
+                        >
+                          {server.is_running ? "Turn Off" : "Turn On"}
+                        </button>
+                      </td>
+                      <td>{server.type_name}</td>
+                      <td>
+                        {(
+                          (server.total_running_time / 60000) *
+                          server.price_per_minute *
+                          changeRate
+                        ).toFixed(2) + ` ${currency}`}
+                      </td>
+                      <td>
+                        <button
+                          className="w-fit"
+                          onClick={() => handleDelete(server.id)}
+                        >
+                          X
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+              ) : (
+                <div> No Servers Yet...</div>
+              )}
             </tbody>
           )}
         </table>
