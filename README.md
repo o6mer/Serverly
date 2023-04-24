@@ -17,8 +17,8 @@ Severly is a web application that allows users to manage servers.
 ## Technologies
 * React.js
 * Node.js
-* PostgreSQL
 * Express
+* PostgreSQL (AWS-RDS)
 
 ## Main Features
 The Severly app has several key features to allow users to manage servers effectively. 
