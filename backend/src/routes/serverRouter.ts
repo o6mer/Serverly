@@ -14,12 +14,12 @@ serverRouter.get("/servers", getServers);
 
 serverRouter.get("/server-types", getServerTypes);
 
+serverRouter.get("/refresh", getPrices);
+
 serverRouter.post("/new", addServer);
 
 serverRouter.post("/toggle/:serverId", toggleServer);
 
 serverRouter.delete("/delete/:serverId", deleteServer);
-
-serverRouter.get("/refresh", getPrices);
 
 export default serverRouter;
