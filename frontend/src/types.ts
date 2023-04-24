@@ -12,3 +12,8 @@ export interface ServerType {
   type_name: string;
   price_per_minute: number;
 }
+
+export interface Currency {
+  name: string;
+  rate: number;
+}

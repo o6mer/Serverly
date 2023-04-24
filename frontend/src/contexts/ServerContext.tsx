@@ -1,5 +1,5 @@
 import { useState, ReactNode, createContext } from "react";
-import { Server, ServerType } from "../types";
+import { Currency, Server, ServerType } from "../types";
 
 export interface IServerContext {
   servers: Server[];
@@ -12,6 +12,8 @@ export interface IServerContext {
       [key: string]: number;
     }>
   >;
+  currency: Currency;
+  setCurrency: React.Dispatch<React.SetStateAction<Currency>>;
 }
 
 export const ServerContext = createContext<IServerContext | null>(null);
@@ -20,6 +22,10 @@ const ServerContextProvider = ({ children }: { children: ReactNode }) => {
   const [servers, setServers] = useState<Server[]>([]);
   const [serverTypes, setServerTypes] = useState<ServerType[]>([]);
   const [currencies, setCurrencies] = useState<{ [key: string]: number }>({});
+  const [currency, setCurrency] = useState<Currency>({
+    name: "USD",
+    rate: 1,
+  });
 
   return (
     <ServerContext.Provider
@@ -30,6 +36,8 @@ const ServerContextProvider = ({ children }: { children: ReactNode }) => {
         setServerTypes,
         currencies,
         setCurrencies,
+        currency,
+        setCurrency,
       }}
     >
       {children}

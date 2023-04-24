@@ -10,7 +10,7 @@ const NewServerForm = () => {
   const [serverTypeId, setServerTypeId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const { setServers, serverTypes } = useContext(
+  const { setServers, serverTypes, currency } = useContext(
     ServerContext
   ) as IServerContext;
 
@@ -101,6 +101,7 @@ const NewServerForm = () => {
         </label>
 
         <select
+          className="border"
           required
           name=""
           id=""
@@ -110,11 +111,17 @@ const NewServerForm = () => {
           <option value="" disabled>
             Server Type
           </option>
-          {serverTypes.map((type) => (
-            <option value={type.type_id} key={type.type_name}>
-              {type.type_name} ({type.price_per_minute}$/minute)
-            </option>
-          ))}
+          {serverTypes
+            .sort((a, b) => a.price_per_minute - b.price_per_minute)
+            .map((type) => (
+              <option value={type.type_id} key={type.type_name}>
+                {type.type_name} (
+                {`${(type.price_per_minute * currency.rate).toFixed(2)} ${
+                  currency.name
+                }`}
+                /minute)
+              </option>
+            ))}
         </select>
         {isLoading ? (
           <Loader />

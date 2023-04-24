@@ -1,21 +1,15 @@
-import { useEffect, useState, useMemo, useContext } from "react";
+import { useEffect, useState, useContext } from "react";
 import axios from "axios";
-import { msToHMS } from "../../utils/timeFormats";
 import Loader from "../general/Loader";
 import { IServerContext, ServerContext } from "../../contexts/ServerContext";
+import ServerRow from "./ServerRow";
 
 const ServersTable = () => {
-  const [currency, setCurrency] = useState("USD");
   const [isLoading, setIsLoading] = useState(false);
 
-  const { currencies, servers, setServers } = useContext(
+  const { servers, setServers, currencies, currency, setCurrency } = useContext(
     ServerContext
   ) as IServerContext;
-
-  const changeRate = useMemo(
-    () => currencies[currency],
-    [currencies, currency]
-  );
 
   useEffect(() => {
     const updateRunningTime = setInterval(() => {
@@ -92,7 +86,7 @@ const ServersTable = () => {
   return (
     <section className="flex flex-col md:items-center w-full md:w-fit">
       <div className="overflow-x-auto">
-        <table className="w-full ">
+        <table className="w-full">
           <thead>
             <tr className=" text-left bg-gray-300 w-full">
               <th>IP</th>
@@ -107,47 +101,17 @@ const ServersTable = () => {
           {isLoading ? (
             <Loader />
           ) : (
-            <tbody>
+            <tbody className=" [&>*:nth-child(even)]:bg-gray-200 ">
               {servers.length ? (
                 servers
                   .sort((a, b) => a.name.localeCompare(b.name))
-                  .map((server, i) => (
-                    <tr
-                      className={`w-max ${i % 2 !== 0 && "bg-slate-200"}`}
-                      key={server.name}
-                    >
-                      <td>{server.ip}</td>
-                      <td>{server.name}</td>
-                      <td>
-                        {server.total_running_time
-                          ? msToHMS(server.total_running_time)
-                          : "00:00:00"}
-                      </td>
-                      <td>
-                        <button
-                          className="border w-fit"
-                          onClick={() => handleToggle(server.id)}
-                        >
-                          {server.is_running ? "Turn Off" : "Turn On"}
-                        </button>
-                      </td>
-                      <td>{server.type_name}</td>
-                      <td>
-                        {(
-                          (server.total_running_time / 60000) *
-                          server.price_per_minute *
-                          changeRate
-                        ).toFixed(2) + ` ${currency}`}
-                      </td>
-                      <td>
-                        <button
-                          className="w-fit"
-                          onClick={() => handleDelete(server.id)}
-                        >
-                          X
-                        </button>
-                      </td>
-                    </tr>
+                  .map((server) => (
+                    <ServerRow
+                      key={server.id}
+                      server={server}
+                      handleDelete={handleDelete}
+                      handleToggle={handleToggle}
+                    />
                   ))
               ) : (
                 <div> No Servers Yet...</div>
@@ -159,13 +123,22 @@ const ServersTable = () => {
 
       <div className="self-end mt-4">
         <select
-          value={currency}
-          onChange={(e) => setCurrency(e.currentTarget.value)}
+          value={currency.rate}
+          onChange={(e) => {
+            setCurrency({
+              name: e.currentTarget.selectedOptions[0].id,
+              rate: Number(e.currentTarget.value),
+            });
+          }}
           className="w-min border"
         >
-          <option value="USD">USD</option>
-          <option value="ILS">ILS</option>
-          <option value="EUR">EUR</option>
+          {Object.entries(currencies)
+            .sort((a, b) => a[0].localeCompare(b[0]))
+            .map((currency) => (
+              <option value={currency[1]} id={currency[0]}>
+                {currency[0]}
+              </option>
+            ))}
         </select>
         <button className="border" onClick={handleRefresh}>
           refresh
