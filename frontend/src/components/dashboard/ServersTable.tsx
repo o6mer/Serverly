@@ -135,7 +135,7 @@ const ServersTable = () => {
           {Object.entries(currencies)
             .sort((a, b) => a[0].localeCompare(b[0]))
             .map((currency) => (
-              <option value={currency[1]} id={currency[0]}>
+              <option value={currency[1]} id={currency[0]} key={currency[0]}>
                 {currency[0]}
               </option>
             ))}
